@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """CLI: python opera.py --voz soprano --pieza ave_maria --limpiar [-o salida.wav] [--mp3] [--mp4]"""
-import argparse, subprocess, numpy as np, scipy.signal as ss, soundfile as sf
+import os, argparse, subprocess, numpy as np, scipy.signal as ss, soundfile as sf
 from voces import cantar, VOCES, SR
 from piano import piano
 from limpiar import limpiar, estadisticas
@@ -18,7 +18,7 @@ PIEZAS['ave_maria_30s'] = dict(
    notas=PIEZAS['ave_maria']['notas'][:-1]+[(70,1.6,'a'),
      (72,.5,'ra'),(74,.4,'ti'),(75,.5,'a'),(74,1.0,'e'),(72,.4,'ne'),(70,1.6,'a'),
      (74,.9,'ma'),(77,.5,'ri'),(75,.4,'a'),(74,.9,'a'),(72,.5,'ra'),(70,.4,'ti'),(69,.5,'a'),(70,.8,'e'),(72,.4,'na'),(74,1.6,'a'),
-     (77,.9,'o'),(75,.5,'mi'),(74,.5,'nu'),(72,.9,'e'),(70,.5,'u'),(69,.5,'e'),(70,3.0,'u')],
+     (77,.9,'o'),(75,.5,'mi'),(74,.5,'nu'),(72,.9,'e'),(70,.5,'u'),(69,.5,'e'),(70,4.0,'u')],
    acordes=['Bb','Bb','Eb','Bb','F7','F7','Bb','Bb','Bb','F7','Bb','F7','F7','Bb','Bb',
             'Bb','Eb','Eb','Bb','F7','F7','Bb','Bb','Eb','Bb','F7','F7','Bb','Bb','Bb','Bb','Bb','Bb','Bb'],
    pulso=.9, arp=PIEZAS['ave_maria']['arp'], dur=30.5)
@@ -30,7 +30,7 @@ def reverb(x, t60=2.0, wet=.2):
     return x + wet*w*np.abs(x).max()/np.abs(w).max()
 
 def render(voz, pieza='ave_maria', limpio=True):
-    P = PIEZAS[pieza]; v = cantar(P['notas'], voz); L = len(v)
+    P = PIEZAS[pieza]; v = cantar(P['notas'], voz, cola=max(1.5, P['dur']-sum(d for _, d, _ in P['notas'])+.2)); L = len(v)
     tr = VOCES[voz]['tr']; sh = -12 if tr <= -12 else 0   # piano transpuesto a la tonalidad de la voz
     ev = []; b = P['pulso']
     for i, c in enumerate(P['acordes']):
@@ -53,6 +53,9 @@ if __name__ == '__main__':
     if g.mp3 or g.mp4:
         subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', out, '-b:a', '160k', base+'.mp3'], check=True)
     if g.mp4:
-        subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', base+'.mp3', '-filter_complex',
-          f"[0:a]showwavespic=s=1280x720:colors=gold,drawtext=text='{g.voz.capitalize()} - Ave Maria (Schubert)':fontcolor=white:fontsize=48:x=(w-tw)/2:y=40[v]",
-          '-map', '[v]', '-map', '0:a', '-c:v', 'libx264', '-tune', 'stillimage', '-pix_fmt', 'yuv420p', '-r', '2', '-c:a', 'aac', '-b:a', '160k', '-shortest', base+'.mp4'], check=True)
+        subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', out, '-filter_complex',
+          f"showwavespic=s=1280x720:colors=gold,drawtext=text='{g.voz.capitalize()} - Ave Maria (Schubert)':fontcolor=white:fontsize=48:x=(w-tw)/2:y=40",
+          '-frames:v', '1', base+'.png'], check=True)
+        subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-loop', '1', '-framerate', '2', '-i', base+'.png', '-i', base+'.mp3',
+          '-c:v', 'libx264', '-tune', 'stillimage', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '160k', '-shortest', base+'.mp4'], check=True)
+        os.remove(base+'.png')

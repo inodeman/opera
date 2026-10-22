@@ -1,0 +1,5 @@
+*.wav
+*.sf2
+soundfonts/
+__pycache__/
+.env

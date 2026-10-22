@@ -34,6 +34,8 @@ La limpieza aplica: paso-alto 60 Hz, compuerta espectral (`noisereduce`, con alt
 ## Demos
 `demos/ave_maria_<voz>.mp3` y `.mp4` (~10 s, frase "A-ve Ma-ri-a" de Schubert, D.839).
 
+`demos/ave_maria_30s_<voz>.mp3` y `.mp4` (~30 s, frase extendida: `--pieza ave_maria_30s`).
+
 ## Limitaciones
 - Es síntesis paramétrica: suena claramente artificial, sobre todo en notas largas; no es una voz humana.
 - Sólo vocales y consonantes rudimentarias; el texto apenas se entiende ("a-e-ma-ri-a").

@@ -13,6 +13,16 @@ PIEZAS = {
    arp={'Bb':[46,53,58,62,65,62],'Eb':[51,55,58,63,67,63],'F7':[41,53,57,60,63,60]}, dur=10.5),
 }
 
+PIEZAS['ave_maria_30s'] = dict(
+   # "A-ve Ma-ri-a, gra-ti-a ple-na, Ma-ri-a gra-ti-a ple-na, Do-mi-nus te-cum" (aprox., Si bemol)
+   notas=PIEZAS['ave_maria']['notas'][:-1]+[(70,1.6,'a'),
+     (72,.5,'ra'),(74,.4,'ti'),(75,.5,'a'),(74,1.0,'e'),(72,.4,'ne'),(70,1.6,'a'),
+     (74,.9,'ma'),(77,.5,'ri'),(75,.4,'a'),(74,.9,'a'),(72,.5,'ra'),(70,.4,'ti'),(69,.5,'a'),(70,.8,'e'),(72,.4,'na'),(74,1.6,'a'),
+     (77,.9,'o'),(75,.5,'mi'),(74,.5,'nu'),(72,.9,'e'),(70,.5,'u'),(69,.5,'e'),(70,3.0,'u')],
+   acordes=['Bb','Bb','Eb','Bb','F7','F7','Bb','Bb','Bb','F7','Bb','F7','F7','Bb','Bb',
+            'Bb','Eb','Eb','Bb','F7','F7','Bb','Bb','Eb','Bb','F7','F7','Bb','Bb','Bb','Bb','Bb','Bb','Bb'],
+   pulso=.9, arp=PIEZAS['ave_maria']['arp'], dur=30.5)
+
 def reverb(x, t60=2.0, wet=.2):
     n = int(t60*SR); r = np.random.default_rng(1)
     ir = ss.sosfilt(ss.butter(2, 4500, fs=SR, output='sos'), r.standard_normal(n))*np.exp(-6.9*np.arange(n)/n)

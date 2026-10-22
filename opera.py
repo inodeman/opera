@@ -57,5 +57,5 @@ if __name__ == '__main__':
           f"showwavespic=s=1280x720:colors=gold,drawtext=text='{g.voz.capitalize()} - Ave Maria (Schubert)':fontcolor=white:fontsize=48:x=(w-tw)/2:y=40",
           '-frames:v', '1', base+'.png'], check=True)
         subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-loop', '1', '-framerate', '2', '-i', base+'.png', '-i', base+'.mp3',
-          '-c:v', 'libx264', '-tune', 'stillimage', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '160k', '-shortest', base+'.mp4'], check=True)
+          '-c:v', 'libx264', '-tune', 'stillimage', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '160k', '-shortest', '-t', str(len(y)/SR), base+'.mp4'], check=True)
         os.remove(base+'.png')
